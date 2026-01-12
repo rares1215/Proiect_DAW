@@ -10,22 +10,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $loc = trim($_POST['location']);
     $date = $_POST['event_date'];
     $cap = $_POST['max_capacity'];
-    if(!empty($title) && !empty($date)){
-        try{
+
+    $errors = [];
+
+    // verificam valoarea capacitatii
+    if($cap <= 0){
+        $errors[] = 'Capacitatea trebuie sa fie un numar mai mare de 0';
+    }
+
+    // verificam ca data sa nu fie in trecut
+    $currentDate = date('Y-m-d H:i:s');
+    if($date < $currentDate){
+        $errors[] = 'Data la care va avea loc evenimentul nu poate fii in trecut';
+    }
+
+
+    // verificam ca titlul sa fie unic
+    $checkTitle = $pdo->prepare("SELECT id FROM events WHERE title = ?");
+    $checkTitle->execute([$title]);
+    if($checkTitle->fetch()){
+        $errors[]= 'Un eveniment cu acest nume exista deja.';
+    }
+
+    // verificam ca 2 eveniemnte sa nu aibe loc in aceasi locatie in acelasi timp
+    $checkConflict = $pdo->prepare("SELECT id FROM events WHERE location = ? AND event_date = ?");
+    $checkConflict->execute([$loc,$date]);
+
+    if($checkConflict->fetch()){
+        $errors[] = 'Locatia este deja ocupata la ora selectata';
+    }
+
+    // Salvam doar daca nu avem nici o eroare.
+    if (empty($errors)) {
+        try {
             $stmt = $pdo->prepare("INSERT INTO events (title, description, location, event_date, max_capacity) VALUES (?, ?, ?, ?, ?)");
-            $stmt -> execute([$title,$desc,$loc,$date,$cap]);
+            $stmt->execute([$title, $desc, $loc, $date, $cap]);
             $success = "Evenimentul a fost adăugat cu succes!";
-        }catch (PDOException $e){
-            $error = "Eroare la salvare: " . $e->getMessage();
+        } catch (PDOException $e) {
+            $errors[] = "Eroare la baza de date: " . $e->getMessage();
         }
-    }else {
-        $error = "Titlul si data sunt obligatorii!";
     }
 };
 ?>
 
-<?php if (isset($success)) echo "<div class='alert alert-success'>$success</div>"; ?>
-<?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach ($errors as $error): ?>
+                <li><?php echo htmlspecialchars($error); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($success)): ?>
+    <div class="alert alert-success"><?php echo $success; ?></div>
+<?php endif; ?>
 
 <form action="admin_dashboard.php" method="POST">
     <div class="form-group">

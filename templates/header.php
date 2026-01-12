@@ -20,7 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
             
             <?php if (isset($_SESSION['user_id'])): ?>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <a href="admin_dashboard.php" style="color: #f1c40f;">Panou Admin</a>
+                    <a href="./admin_dashboard.php" style="color: #f1c40f;">Panou Admin</a>
                 <?php endif; ?>
                 <a href="events.php">Events</a>
                 <a href="logout.php">Logout</a>

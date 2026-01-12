@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="number" name="max_capacity" value="<?php echo $event['max_capacity']; ?>">
     </div>
     <button type="submit">Salvează Modificările</button>
-    <a href="evenimente.php" style="margin-left: 10px;">Anulează</a>
+    <a href="events.php" style="margin-left: 10px;">Anulează</a>
 </form>
 
 <?php include './templates/footer.php'; ?>
