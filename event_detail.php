@@ -42,6 +42,34 @@ try{
         <?php echo htmlspecialchars($event['description']); ?>
     </div>
 
+    <?php 
+
+        //verificam daca user-ul este deja participant la eveniment
+        $checkQuery = $pdo->prepare("SELECT id FROM reservations WHERE user_id = ? AND event_id = ?");
+        $checkQuery->execute([$_SESSION['user_id'], $id]);
+        $is_reserved = $checkQuery->fetch();
+
+        /// verificam inainte daca mai sunt locuri disponibile la eveniment
+        $countQuery = $pdo->prepare("SELECT COUNT(*) FROM reservations WHERE event_id = ?");
+        $countQuery->execute([$id]);
+        $reservationsNumber = $countQuery->fetchColumn();
+    ?>
+
+    <div style="margin-top: 20px; padding: 15px; border: 1px dashed #ccc;">
+        <?php if ($is_reserved): ?>
+            <p style="color: green; font-weight: bold;">✅ Ești deja înscris la acest eveniment!</p>
+            <a href="cancel_reservation.php?id=<?php echo $id; ?>" style="color: red; font-size: 0.8em;">Anulează participarea</a>
+        <?php elseif ($reservationsNumber >= $event['max_capacity']): ?>
+            <p style="color: red; font-weight: bold;">🚫 Ne pare rău, nu mai sunt locuri disponibile.</p>
+        <?php else: ?>
+            <form action="./book_event.php" method="POST">
+                <input type="hidden" name="event_id" value="<?php echo $id; ?>">
+                <button type="submit" class="button" style="background: #27ae60; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px;">Participă la Eveniment</button>
+            </form>
+            <p><small>Locuri disponibile: <?php echo $event['max_capacity'] - $reservationsNumber; ?></small></p>
+        <?php endif; ?>
+    </div>
+
     <?php if ($_SESSION['role'] === 'admin'): ?>
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
             <a href="edit_event.php?id=<?php echo $event['id']; ?>" class="button" style="background: #3498db; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Editează Eveniment</a>
