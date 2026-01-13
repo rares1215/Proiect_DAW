@@ -22,6 +22,7 @@ $events = $stmt -> fetchAll();
             
             <?php if ($_SESSION['role'] === 'admin'): ?>
                 <hr>
+                <a href="participants.php?id=<?php echo $event['id']; ?>" style="color: purple; font-weight: bold;">👥 Vezi Participanți</a> |
                 <a href="edit_event.php?id=<?php echo $event['id']; ?>" style="color: blue;">Editează</a> | 
                 <a href="delete_event.php?id=<?php echo $event['id']; ?>" style="color: red;" onclick="return confirm('Sigur vrei să ștergi?')">Șterge</a>
             <?php endif; ?>
