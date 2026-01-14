@@ -13,17 +13,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $code = trim($_POST['verification_code']);
 
     // query in baza de date pentru a gasii utilizator cu emailul si codul de verificare corespunzator.
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND verification_code = ? AND is_active = 0");
+    $stmt = $pdo->prepare("SELECT id,v_code_at FROM users WHERE email = ? AND verification_code = ? AND is_active = 0");
     $stmt->execute([$email, $code]);
     $user = $stmt->fetch();
 
     if ($user) {
-        // daca utilizatorul exista si codul este corect atunci "activam" contul si stergem codul
+        $createdAt = strtotime($user['v_code_at']);
+        $currentTime = time();
+        $expMinutes = ($currentTime-$createdAt)/60;
+
+        if($expMinutes > 2){
+        $message = "Codul de verificare a expirat. <a href='resend_code.php?email=" . urlencode($email) . "'>Trimite alt cod</a>";
+        $messageClass = "alert-danger";
+        }else{
         $update = $pdo->prepare("UPDATE users SET is_active = 1, verification_code = NULL WHERE id = ?");
         $update->execute([$user['id']]);
-
-        $message = "Contul a fost activat cu succes! Acum te poți loga.";
-        $messageClass = "alert-success";
+        header("Location: login.php");
+        }
     } else {
         $message = "Codul de verificare este incorect sau contul este deja activat.";
         $messageClass = "alert-danger";

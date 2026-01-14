@@ -54,23 +54,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // generam cod de verificare prin email
         $v_code = bin2hex(random_bytes(16));
+        $time_code_sended = date('Y-m-d H:i:s');
 
         /// Pregatim inserarea in SQL cu pdo (pentru prevenire sql injection)
-        $sql = "INSERT INTO users (username, email, password, verification_code) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO users (username, email, password, verification_code,v_code_at) VALUES (?, ?, ?, ?,?)";
         $stmt = $pdo->prepare($sql);
 
-        try{
-            $stmt->execute([$user, $email, $hashed_password, $v_code]);
+        try {
+            $stmt->execute([$user, $email, $hashed_password, $v_code,$time_code_sended]);
+            
             if (sendVerificationEmail($email, $v_code)) {
                 header("Location: verify.php?email=" . urlencode($email));
                 exit;
             } else {
-                $errors[] = "Contul a fost creat, dar mail-ul de verificare nu a putut fi trimis.";
+                // Dacă mail-ul eșuează, informăm admin-ul/user-ul
+                $errors[] = "Contul a fost creat, dar mail-ul de verificare nu a putut fi trimis. Contactați administratorul.";
             }
-            header("Location: verify.php?email=" . urlencode($email));
-        }catch (PDOException $e) {
-            echo $e;
-        };
+        } catch (PDOException $e) {
+            $errors[] = "Eroare la baza de date: " . $e->getMessage();
+        }
     }
 }
 ?>
