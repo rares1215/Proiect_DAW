@@ -66,6 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] =='POST'){
     <button type="submit">Intră în cont</button>
 </form>
 
-<p>Nu ai cont? <a href="register.php">Înregistrează-te aici</a>.</p>
+<p class="login-register-link">Nu ai cont? <a href="register.php">Înregistrează-te aici</a>.</p>
 
 <?php include './templates/footer.php'; ?>

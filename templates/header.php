@@ -13,14 +13,16 @@ if (session_status() === PHP_SESSION_NONE) {
 </head>
 <body>
 <nav>
-    <div class="nav-content">
-        <div class="logo"><a href="index.php" style="color:white; text-decoration:none;">Evenimente Pro</a></div>
+        <div class="nav-content">
+            <div class="logo">
+            <a href="index.php" class="logo-link">Evenimente Pro</a>
+        </div>
         <div class="links">
             <a href="index.php">Acasă</a>
             
             <?php if (isset($_SESSION['user_id'])): ?>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <a href="./admin_dashboard.php" style="color: #f1c40f;">Panou Admin</a>
+                    <a href="./admin_dashboard.php" class="admin-link">Panou Admin</a>
                 <?php endif; ?>
                 <a href="events.php">Events</a>
                 <a href="logout.php">Logout</a>

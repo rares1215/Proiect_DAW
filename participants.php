@@ -32,24 +32,25 @@ $participants = $stmtPart->fetchAll();
     <p>Total înscriși: <strong><?php echo count($participants); ?></strong></p>
 
     <?php if (count($participants) > 0): ?>
-        <table border="1" style="width:100%; border-collapse: collapse; margin-top: 20px;">
+        <table class="participants-table">
             <thead>
-                <tr style="background: #eee;">
-                    <th style="padding: 10px;">Username</th>
-                    <th style="padding: 10px;">Email</th>
-                    <th style="padding: 10px;">Data Înscrierii</th>
+                <tr class="table-header">
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Data Înscrierii</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($participants as $p): ?>
                     <tr>
-                        <td style="padding: 10px;"><?php echo htmlspecialchars($p['username']); ?></td>
-                        <td style="padding: 10px;"><?php echo htmlspecialchars($p['email']); ?></td>
-                        <td style="padding: 10px;"><?php echo date('d.m.Y H:i', strtotime($p['reservation_date'])); ?></td>
+                        <td><?php echo htmlspecialchars($p['username']); ?></td>
+                        <td><?php echo htmlspecialchars($p['email']); ?></td>
+                        <td><?php echo date('d.m.Y H:i', strtotime($p['reservation_date'])); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+
     <?php else: ?>
         <p>Momentan nu s-a înscris nimeni la acest eveniment.</p>
     <?php endif; ?>

@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="form-group">
         <label>Descriere:</label>
-        <textarea name="description" rows="4" style="width:100%"></textarea>
+        <textarea name="description" rows="4" class="textarea-full"></textarea>
     </div>
     <div class="form-group">
         <label>Locație:</label>
